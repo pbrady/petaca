@@ -162,11 +162,13 @@ module secure_hash_class
     procedure, non_overridable :: update_real64_1
     procedure, non_overridable :: update_real64_2
     procedure, non_overridable :: update_real64_3
+#ifndef __FLANG
     generic, public :: update => update_real128_0, update_real128_1, update_real128_2, update_real128_3
     procedure, non_overridable :: update_real128_0
     procedure, non_overridable :: update_real128_1
     procedure, non_overridable :: update_real128_2
     procedure, non_overridable :: update_real128_3
+#endif
     generic, public :: update => update_char_0, update_char_1, update_char_2, update_char_3
     procedure, non_overridable :: update_char_0
     procedure, non_overridable :: update_char_1
@@ -585,6 +587,7 @@ contains
     call update_real64 (this, data, size(data))
   end subroutine
 
+#ifndef __FLANG
 !!!! REAL(KIND=REAL128) DATA !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine update_real128 (this, data, len)
@@ -619,6 +622,7 @@ contains
     real(real128), intent(in) :: data(:,:,:)
     call update_real128 (this, data, size(data))
   end subroutine
+#endif
 
 !!!! DEFAULT CHARACTER DATA !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

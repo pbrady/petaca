@@ -7,7 +7,7 @@
 # ---------------------------------------------------------------------------- #
 # Set policy and CMake version requirements
 # ---------------------------------------------------------------------------- #
-cmake_minimum_required(VERSION 3.3)
+cmake_minimum_required(VERSION 3.10.3)
 
 # ---------------------------------------------------------------------------- #
 # Project definitions
@@ -51,6 +51,10 @@ elseif(CMAKE_Fortran_COMPILER_ID STREQUAL "GNU")
   set(CMAKE_Fortran_FLAGS_DEBUG "-g -fbacktrace -ffree-line-length-none -fcheck=all -Wall -Wextra")
 endif()
 
+# Temporary hack.  Cmake thinks the flang compiler is GNU.
+set(CMAKE_Fortran_COMPILER_ID "FLANG")
+message(STATUS "CMAKE_Fortran_COMPILER_ID=${CMAKE_Fortran_COMPILER_ID}")
+
 # Fortran preprocessor defines
 set(Fortran_COMPILE_DEFINITIONS)
 if(CMAKE_Fortran_COMPILER_ID MATCHES Intel)
@@ -75,6 +79,12 @@ elseif(CMAKE_Fortran_COMPILER_ID MATCHES NAG)
   endif()
 elseif(CMAKE_Fortran_COMPILER_ID MATCHES GNU)
   list(APPEND Fortran_COMPILE_DEFINITIONS NO_2008_GENERIC_RESOLUTION)
+elseif(CMAKE_Fortran_COMPILER_ID MATCHES FLANG)
+  list(APPEND Fortran_COMPILE_DEFINITIONS NO_2008_EXECUTE_COMMAND_LINE)
+  list(APPEND Fortran_COMPILE_DEFINITIONS NO_2008_GENERIC_RESOLUTION)
+  list(APPEND Fortran_COMPILE_DEFINITIONS NO_2008_SOURCED_ALLOC_ARRAY)
+  list(APPEND Fortran_COMPILE_DEFINITIONS NO_2008_LHS_POLY_REALLOC)
+  list(APPEND Fortran_COMPILE_DEFINITIONS FLANG_240)
 endif()
 
 # Append preprocessor defines to the compiler flags

@@ -172,7 +172,12 @@ module parameter_list_type
   type, extends(parameter_entry), public :: parameter_list
     private
     character(:), allocatable :: name_
+#ifdef FLANG_240
+    !! Omit default initialization to avoid compile error, but likely to cause run-time errors
+    type(map_any) :: params! = map_any()
+#else
     type(map_any) :: params = map_any()
+#endif
   contains
     procedure :: name
     procedure :: set_name

@@ -40,10 +40,17 @@ module valid_hash_function
 contains
 
   logical function valid_hash_aux (h)
-#ifdef NO_2008_EXECUTE_COMMAND_LINE
+#if defined(NO_2008_EXECUTE_COMMAND_LINE) && defined(__INTEL_COMPILER)
     use ifport, only: system
 #endif
     class(secure_hash), intent(inout) :: h
+#ifdef __FLANG
+    interface
+      integer function system(command)
+        character(*), intent(in) :: command
+      end function
+    end interface
+#endif
     integer :: unit, comstat
     character(:), allocatable :: command
     !! Write the computed hash sum of the data (checksum format)
@@ -96,9 +103,11 @@ contains
     type is (real(real64))
       write(unit) a
       call h%update (a)
+#ifndef __FLANG
     type is (real(real128))
       write(unit) a
       call h%update (a)
+#endif
     type is (character(*))
       write(unit) a
       call h%update (a)
@@ -152,9 +161,11 @@ contains
     type is (real(real64))
       write(unit) a
       call h%update (a)
+#ifndef __FLANG
     type is (real(real128))
       write(unit) a
       call h%update (a)
+#endif
     type is (character(*))
       write(unit) a
       call h%update (a)
@@ -208,9 +219,11 @@ contains
     type is (real(real64))
       write(unit) a
       call h%update (a)
+#ifndef __FLANG
     type is (real(real128))
       write(unit) a
       call h%update (a)
+#endif
     type is (character(*))
       write(unit) a
       call h%update (a)
@@ -264,9 +277,11 @@ contains
     type is (real(real64))
       write(unit) a
       call h%update (a)
+#ifndef __FLANG
     type is (real(real128))
       write(unit) a
       call h%update (a)
+#endif
     type is (character(*))
       write(unit) a
       call h%update (a)
@@ -308,7 +323,9 @@ program test_secure_hash
   call test_md5_int64
   call test_md5_real32
   call test_md5_real64
+#ifndef __FLANG
   call test_md5_real128  ! real128 not portable between compilers
+#endif
   call test_md5_character
   call test_md5_log8     !logical types not portable between compilers
   call test_md5_log16
@@ -322,7 +339,9 @@ program test_secure_hash
   call test_sha1_int64
   call test_sha1_real32
   call test_sha1_real64
+#ifndef __FLANG
   call test_sha1_real128  ! real128 not portable between compilers
+#endif
   call test_sha1_character
   call test_sha1_log8     !logical types not portable between compilers
   call test_sha1_log16
@@ -500,6 +519,7 @@ contains
     call test ('md5_test_real64: rank-3 array', valid_hash(a3, 'md5'))
   end subroutine test_md5_real64
 
+#ifndef __FLANG
   subroutine test_md5_real128
     real(real128) :: a0, a1(2), a2(2,3), a3(2,3,4)
     a0 = -130010023087234.0_real128
@@ -509,6 +529,7 @@ contains
     call test ('md5_test_real128: rank-2 array', valid_hash(a2, 'md5'))
     call test ('md5_test_real128: rank-3 array', valid_hash(a3, 'md5'))
   end subroutine test_md5_real128
+#endif
 
   subroutine test_md5_character
     character(5) :: a0, a1(2), a2(2,3), a3(2,3,4)
@@ -692,6 +713,7 @@ contains
     call test ('sha1_test_real64: rank-3 array', valid_hash(a3, 'sha1'))
   end subroutine test_sha1_real64
 
+#ifndef __FLANG
   subroutine test_sha1_real128
     real(real128) :: a0, a1(2), a2(2,3), a3(2,3,4)
     a0 = -130010023087234.0_real128
@@ -701,6 +723,7 @@ contains
     call test ('sha1_test_real128: rank-2 array', valid_hash(a2, 'sha1'))
     call test ('sha1_test_real128: rank-3 array', valid_hash(a3, 'sha1'))
   end subroutine test_sha1_real128
+#endif
 
   subroutine test_sha1_character
     character(5) :: a0, a1(2), a2(2,3), a3(2,3,4)
