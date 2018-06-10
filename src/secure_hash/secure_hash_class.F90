@@ -90,10 +90,6 @@
 !!    so we pass just the first element of the array in these cases (dicey?)
 !!
 
-#ifdef NAGFOR
-#define NAG_WORKAROUND
-#endif
-
 #include "f90_assert.fpp"
 
 module secure_hash_class
@@ -634,11 +630,6 @@ contains
   subroutine update_char_0 (this, data)
     class(secure_hash), intent(inout) :: this
     character(*), intent(in) :: data
-#ifdef NAG_WORKAROUND
-    !! There's something wrong with the -C generated code.
-    !! Probably ought to do something similar with the other flavors below.
-    if (len(data) == 0) return
-#endif
     call update_char (this, data, len(data))
   end subroutine
 

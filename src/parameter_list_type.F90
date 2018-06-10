@@ -140,22 +140,6 @@
 !!    current parameter provided it is a matrix; otherwise it returns a null
 !!    pointer.
 !!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!
-!! NOTES
-!!
-!! 1) The passed-object argument of the VALUE_PTR method of the ANY_SCALAR,
-!!    ANY_VECTOR, and ANY_MATRIX types is declared with the target attribute
-!!    (the function returns a pointer to a non-pointer component of the object).
-!!    This means that the object, in the caller, must also have the target
-!!    attribute.  In the untweaked procedures that reference this note, the
-!!    object is an associate name in a class-is block of a select-type
-!!    construct.  That associate name should have the target attribute (the
-!!    selector does) but recent changes to the NAG compiler have broken that
-!!    (edit 942 and earlier work but 962 does not).  In this case this result
-!!    is silent run time errors further up the calling chain -- pointers
-!!    silently lose their targets.
-!!
 
 #include "f90_assert.fpp"
 
@@ -1496,7 +1480,6 @@ contains
 
   !! If the current parameter has a scalar value, return a CLASS(*)
   !! pointer to it; otherwise return a null pointer.
-  !! N.B. See Note 1 regarding the NAG workaround.
   function iter_scalar (this) result (scalar)
     class(parameter_list_iterator), intent(in) :: this
     class(*), pointer :: scalar
@@ -1513,7 +1496,6 @@ contains
 
   !! If the current parameter has a vector value, return a CLASS(*)
   !! rank-1 array pointer to it; otherwise return a null pointer.
-  !! N.B. See Note 1 regarding the NAG workaround.
   function iter_vector (this) result (vector)
     class(parameter_list_iterator), intent(in) :: this
     class(*), pointer :: vector(:)
@@ -1530,7 +1512,6 @@ contains
 
   !! If the current parameter has a matrix value, return a CLASS(*)
   !! rank-1 array pointer to it; otherwise return a null pointer.
-  !! N.B. See Note 1 regarding the NAG workaround.
   function iter_matrix (this) result (matrix)
     class(parameter_list_iterator), intent(in) :: this
     class(*), pointer :: matrix(:,:)
