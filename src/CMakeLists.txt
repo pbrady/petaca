@@ -16,10 +16,14 @@ set(SRC
     timer_tree_type.F90
 )
 
+set(HEADERS f90_assert.fpp)
+# Hang on to concatenate.h and stringify.h for possible future use
+#set(HEADERS f90_assert.fpp concatenate.h stringify.h)
+
 if(CMAKE_Fortran_COMPILER_ID MATCHES GNU)
-  set_property (SOURCE secure_hash/md5_hash_type.F90
-                       secure_hash/sha1_hash_type.F90
-                PROPERTY COMPILE_FLAGS -fno-range-check)
+  set_property(SOURCE secure_hash/md5_hash_type.F90
+                      secure_hash/sha1_hash_type.F90
+               PROPERTY COMPILE_FLAGS -fno-range-check)
 endif()
 
 add_library(petaca ${SRC})
@@ -30,7 +34,7 @@ set_target_properties(petaca PROPERTIES Fortran_MODULE_DIRECTORY ${LIB_MOD_DIR})
 target_link_libraries(petaca PUBLIC YAJL::YAJL dl)
 
 target_include_directories(petaca PUBLIC
-    $<BUILD_INTERFACE:${Petaca_INCLUDE_DIR}>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
     $<BUILD_INTERFACE:${LIB_MOD_DIR}>
     $<INSTALL_INTERFACE:lib>
 )
@@ -41,3 +45,4 @@ install(TARGETS petaca
         ARCHIVE DESTINATION lib
 )
 install(DIRECTORY ${LIB_MOD_DIR} DESTINATION lib)
+#install(FILES ${HEADERS} DESTINATION include)
