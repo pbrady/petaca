@@ -339,9 +339,16 @@ contains
         k = int(z'CA62C1D6',kind=int32)
       end select
       if (i >= 16) then
+#ifdef __PGIC__
+        !! no instrinsic MASKR, but maybe better anyway.
+        m = ishftc(ieor(ieor(ieor(x(iand(i,15)),x(iand(i-14,15))),&
+                      x(iand(i-8,15))),x(iand(i-3,15))),1)
+        x(iand(i,15)) = m
+#else
         m = ishftc(ieor(ieor(ieor(x(iand(i,maskr(4))),x(iand(i-14,maskr(4)))),&
                       x(iand(i-8,maskr(4)))),x(iand(i-3,maskr(4)))),1)
         x(iand(i,maskr(4))) = m
+#endif
       else
         m = x(i)
       end if

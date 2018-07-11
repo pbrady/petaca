@@ -4,7 +4,7 @@ set(SRC
     map_any_type.F90
     yajl_fort.F90
     yajl_ext.c
-    json.F90
+#    json.F90
     parameter_entry_class.F90
     parameter_list_type.F90
     parameter_list_json.F90

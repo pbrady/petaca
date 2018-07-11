@@ -94,7 +94,7 @@
 !!  SET_NAME(NAME) sets the name of the parameter list to NAME.  A parameter
 !!    list created by SUBLIST is automatically assigned a default name.  It is
 !!    the name of the parent parameter list appended with '->' followed by the
-!!    sublist parameter name.  Use this function to override the default name. 
+!!    sublist parameter name.  Use this function to override the default name.
 !!
 !! PARAMETER_LIST_ITERATOR TYPE BOUND PROCEDURES
 !!
@@ -172,7 +172,12 @@ module parameter_list_type
   type, extends(parameter_entry), public :: parameter_list
     private
     character(:), allocatable :: name_
+#ifdef __PGIC__
+    !! Omit default initialization to avoid ICE; likely to cause run time error results
+    type(map_any) :: params! = map_any()
+#else
     type(map_any) :: params = map_any()
+#endif
   contains
     procedure :: name
     procedure :: set_name
