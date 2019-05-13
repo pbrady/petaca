@@ -665,7 +665,11 @@ contains
         return
       end if
     else  ! discovered the type
+#ifdef FLANG_ISSUE722
+      allocate(this%mold, source=value)
+#else
       allocate(this%mold, mold=value)
+#endif
     end if
     call this%values%push (value)
 
@@ -751,7 +755,11 @@ contains
     class(*), allocatable, intent(out) :: array(:)
     INSIST(this%complete)
     INSIST(product(this%shape) == this%values%size())
+#ifdef FLANG_ISSUE722
+    allocate(array(this%values%size()), source=this%mold)
+#else
     allocate(array(this%values%size()), mold=this%mold)
+#endif
     select type (array)
     type is (integer)
       call this%values%to_array (array)

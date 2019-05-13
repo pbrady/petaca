@@ -163,6 +163,11 @@ module parameter_entry_class
     procedure, private :: get_scalar_character
     procedure, private :: get_scalar_logical
     procedure :: write => write_scalar
+#ifdef FLANG_ISSUE244
+    ! Intrinsic assignment of type with class(*) component is broken
+    generic :: assignment(=) => scalar_assign
+    procedure, private :: scalar_assign
+#endif
   end type
 
   !! User-defined constructor.
@@ -186,6 +191,11 @@ module parameter_entry_class
     procedure, private :: get_vector_character
     procedure, private :: get_vector_logical
     procedure :: write => write_vector
+#ifdef FLANG_ISSUE244
+    ! Intrinsic assignment of type with class(*) component is broken
+    generic :: assignment(=) => vector_assign
+    procedure, private :: vector_assign
+#endif
   end type
 
   !! User-defined constructor.
@@ -209,6 +219,11 @@ module parameter_entry_class
     procedure, private :: get_matrix_character
     procedure, private :: get_matrix_logical
     procedure :: write => write_matrix
+#ifdef FLANG_ISSUE244
+    ! Intrinsic assignment of type with class(*) component is broken
+    generic :: assignment(=) => matrix_assign
+    procedure, private :: matrix_assign
+#endif
   end type
 
   !! User-defined constructor.
@@ -217,6 +232,37 @@ module parameter_entry_class
   end interface
 
 contains
+
+#ifdef FLANG_ISSUE244
+  ! Intrinsic assignment of types with class(*) component is broken
+  subroutine scalar_assign(lhs, rhs)
+    class(any_scalar), intent(inout) :: lhs
+    type(any_scalar), intent(in) :: rhs
+    ! assuming lhs and rhs are different variables
+    if (allocated(lhs%value)) deallocate(lhs%value)
+    if (allocated(rhs%value)) allocate(lhs%value, source=rhs%value)
+  end subroutine scalar_assign
+
+  subroutine vector_assign(lhs, rhs)
+    class(any_vector), intent(inout) :: lhs
+    type(any_vector), intent(in) :: rhs
+    integer :: j
+    ! assuming lhs and rhs are different variables
+    if (allocated(lhs%value)) deallocate(lhs%value)
+    if (allocated(rhs%value)) &
+        allocate(lhs%value(lbound(rhs%value,1):ubound(rhs%value,1)), source=rhs%value)
+  end subroutine vector_assign
+
+  subroutine matrix_assign(lhs, rhs)
+    class(any_matrix), intent(inout) :: lhs
+    type(any_matrix), intent(in) :: rhs
+    ! assuming lhs and rhs are different variables
+    if (allocated(lhs%value)) deallocate(lhs%value)
+    if (allocated(rhs%value)) &
+        allocate(lhs%value(lbound(rhs%value,1):ubound(rhs%value,1), &
+                           lbound(rhs%value,2):ubound(rhs%value,2)), source=rhs%value)
+  end subroutine matrix_assign
+#endif
 
  !!
  !! SCALAR_ANY TYPE BOUND PROCEDURES
